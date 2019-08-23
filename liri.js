@@ -36,7 +36,7 @@ function concert(artist) {
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp").then(function (response) {
         var songData = response.data[0];
         console.log(`
-        Venue Name: ${songData.venue.name}
+        \nVenue Name: ${songData.venue.name}
         \nVenue Location: ${songData.venue.city}, ${songData.venue.region}
         \nDate of Event: ${songData.datetime}
         `);
@@ -77,8 +77,8 @@ function getMovie(movie) {
             Plot:  ${ response.data.Plot}
             Actors:  ${ response.data.Actors}
             `)
-            fileAppend();
         })
+
 }
 
 
@@ -90,12 +90,6 @@ function doThing() {
         var random = data.split(",");
         spotifyThis(random[1]);
     });
+
 }
 
-function fileAppend() {
-    fs.appendFile("log.txt", "\n" + Text, function (err) {
-        if (err) {
-            return console.log(err);
-        }
-    })
-}
