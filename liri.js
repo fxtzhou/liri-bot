@@ -4,19 +4,46 @@ var axios = require("axios");
 var fs = require("fs");
 var Spotify = require("node-spotify-api");
 var spotify = new Spotify(keys.spotify);
-var input = process.argv[3];
+const input = process.argv.slice(3).join();
 var choice = process.argv[2];
+
+switch (choice) {
+    case "concert-this":
+        concert(input);
+        break;
+    case "spotify-this":
+        if (input) {
+            spotifyThis(input);
+        } else {
+            spotifyThis("The Sign Ace of Base");
+        }
+        break;
+    case "movie-this":
+        if (input) {
+            getMovie(input);
+        } else {
+            getMovie("Mr. Nobody");
+        }
+        break;
+    case "do-thing":
+        doThing();
+        break;
+    default:
+        console.log("Try again.")
+}
 
 function concert(artist) {
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp").then(function (response) {
         var songData = response.data[0];
-        console.log(`Venue Name: ${songData.venue.name}`);
-        console.log(`Venue Location: ${songData.venue.city}, ${songData.venue.region}`);
-        console.log(`Date of Event: ${songData.datetime}`);
+        console.log(`
+        Venue Name: ${songData.venue.name}
+        \nVenue Location: ${songData.venue.city}, ${songData.venue.region}
+        \nDate of Event: ${songData.datetime}
+        `);
 
     })
 }
-concert(input);
+
 
 function spotifyThis(song) {
     spotify.search({
@@ -26,18 +53,49 @@ function spotifyThis(song) {
         if (err) {
             return console.log("Error occurred: " + err);
         }
-        text =
-            "\n___Track Info___" +
-            "\nArtist: " +
-            data.tracks.items[0].artists[0].name +
-            "\nSong: " +
-            data.tracks.items[0].name +
-            "\nLink: " +
-            data.tracks.items[0].external_urls.spotify +
-            "\nAlbum: " +
-            data.tracks.items[0].album.name +
-            "\n";
-        console.log(text);
+        console.log(
+            `
+            \nArtist: ${data.tracks.items[0].artists[0].name}
+            \nSong: ${data.tracks.items[0].name} 
+            \nLink: ${data.tracks.items[0].external_urls.spotify} 
+            \nAlbum: ${data.tracks.items[0].album.name} 
+            `)
     })
 };
-spotifyThis(input);
+
+
+function getMovie(movie) {
+    axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy").then(
+        function (response) {
+            console.log(`
+            Title:  ${response.data.Title}
+            Year:  ${ response.data.Year}
+            IMDB Rating:  ${ response.data.imdbRating}
+            Rotten Tomatoes Rating:  ${ response.data.Ratings[2].Value}
+            Country:  ${ response.data.Country}
+            Language:  ${ response.data.Language}
+            Plot:  ${ response.data.Plot}
+            Actors:  ${ response.data.Actors}
+            `)
+            fileAppend();
+        })
+}
+
+
+function doThing() {
+    fs.readFile("random.txt", "utf-8", function (err, data) {
+        if (err) {
+            return console.log(error);
+        }
+        var random = data.split(",");
+        spotifyThis(random[1]);
+    });
+}
+
+function fileAppend() {
+    fs.appendFile("log.txt", "\n" + Text, function (err) {
+        if (err) {
+            return console.log(err);
+        }
+    })
+}
