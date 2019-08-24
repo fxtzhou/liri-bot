@@ -1,11 +1,13 @@
 require("dotenv").config();
 var keys = require("./keys.js");
 var axios = require("axios");
+var moment = require("moment");
 var fs = require("fs");
 var Spotify = require("node-spotify-api");
 var spotify = new Spotify(keys.spotify);
 const input = process.argv.slice(3).join();
 var choice = process.argv[2];
+
 
 switch (choice) {
     case "concert-this":
@@ -38,7 +40,7 @@ function concert(artist) {
         console.log(`
         \nVenue Name: ${songData.venue.name}
         \nVenue Location: ${songData.venue.city}, ${songData.venue.region}
-        \nDate of Event: ${songData.datetime}
+        \nDate of Event: ${ moment(response.data[0].datetime).format("MM/DD/YYYY")}
         `);
 
     })
@@ -92,4 +94,3 @@ function doThing() {
     });
 
 }
-
